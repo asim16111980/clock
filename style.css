@@ -23,7 +23,7 @@ body {
 body.dark {
   --main-bg-color: #242526;
   --clock-bg-color:#18191a;
-  --text-color:#fff;
+  --button-bg-color:#fff;
 }
 .container {
   display: flex;
@@ -118,6 +118,7 @@ body.dark {
   font-weight: 400;
   border-radius: 8px;
   cursor: pointer;
+  user-select: none;
   color: var(--clock-bg-color);
   background-color: var(--button-bg-color);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
