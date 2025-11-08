@@ -104,8 +104,8 @@ body.dark {
 }
 .indicator .hand {
   position: absolute;
-  width: 4px;
-  height: 180px;
+  width: 5px;
+  height: 160px;
   bottom: 0;
   background-color: var(--red-color);
   transform-origin: bottom;
@@ -116,13 +116,13 @@ body.dark {
   -o-border-radius: 25px;
 }
 .indicator .hand.minute {
-  width: 5px;
-  height: 170px;
+  width: 6px;
+  height: 150px;
   background-color: var(--button-bg-color);
 }
 .indicator .hand.hour {
   width: 8px;
-  height: 150px;
+  height: 130px;
   background-color: var(--button-bg-color);
 }
 .mode-switch {
