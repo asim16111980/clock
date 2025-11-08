@@ -3,6 +3,7 @@ const secondHand = document.getElementsByClassName("second");
 const minuteHand = document.getElementsByClassName("minute");
 const hourHand = document.getElementsByClassName("hour");
 const modeSwitch = document.getElementsByClassName("mode-switch");
+const video = document.getElementById("video");
 
 // Handle mode switching
 modeSwitch[0].addEventListener("click", () => {
@@ -10,57 +11,35 @@ modeSwitch[0].addEventListener("click", () => {
 });
 
 // --- Audio tick setup (Web Audio API) ---
-let audioCtx = null;
-let audioAllowed = false; // becomes true after user interaction/resume
+// let audioCtx = null;
+// let audioAllowed = false; // becomes true after user interaction/resume
 
-function initAudio() {
-  if (!audioCtx)
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
+// function initAudio() {
+//   if (!audioCtx)
+//     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// }
 
-// Resume audio on first user interaction (many browsers block autoplay)
-function resumeAudioOnInteraction() {
-  initAudio();
-  if (audioCtx.state === "suspended") audioCtx.resume();
-  audioAllowed = true;
-}
+// // Resume audio on first user interaction (many browsers block autoplay)
+// function resumeAudioOnInteraction() {
+//   initAudio();
+//   if (audioCtx.state === "suspended") audioCtx.resume();
+//   audioAllowed = true;
+// }
 // Try to resume on first click/tap — use once so listener is removed after first run
-document.addEventListener("click", resumeAudioOnInteraction, { once: true });
+// document.addEventListener("click", resumeAudioOnInteraction, { once: true });
 
-// Play a short tick. type: 'second' or 'hour'
-function playTick(type = "second") {
-  if (!audioCtx) return; // not initialized yet
-  // If audio hasn't been allowed/resumed yet, avoid playing (will be resumed on interaction)
-  if (!audioAllowed && audioCtx.state !== "running") return;
+const tickSound = new Audio("./tick.wav");
+tickSound.volume = 0.3;
+video.volume = 0.4;
+// const hourSound = new Audio("sounds/hour.mp3");
 
-  const now = audioCtx.currentTime;
-
-  // Use an oscillator + gain envelope for a short click-like sound
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-
-    if (type === "second") {
-   // إعدادات صوت التكة الواقعية
-  o.type = 'triangle';
-  o.frequency.setValueAtTime(300, now);
-  g.gain.setValueAtTime(0.0001, now);
-  g.gain.exponentialRampToValueAtTime(0.6, now + 0.002);
-  g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.start(now);
-    o.stop(now + 0.15);
-  } else if (type === "hour") {
-    // a slightly lower, longer tick for hours
-    o.type = "sine";
-    o.frequency.setValueAtTime(600, now);
-    g.gain.setValueAtTime(0.0001, now);
-    g.gain.exponentialRampToValueAtTime(0.8, now + 0.002);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.start(now);
-    o.stop(now + 0.2);
+function playTick(type = 'second') {
+  if (type === 'second') {
+    tickSound.currentTime = 0;     
+    tickSound.play();
+  } else if (type === 'hour') {
+    hourSound.currentTime = 0;
+    hourSound.play();
   }
 }
 
@@ -82,18 +61,16 @@ setInterval(_updateAndTick, 1000);
 let _prevHour = null;
 
 function _updateAndTick() {
-  const before = new Date();
-  const prevSecond = before.getSeconds();
   updateClock();
 
   // initialize/ensure audio context exists (will be resumed after user interaction)
-  initAudio();
+  // initAudio();
 
   // Play second tick every time (updateClock called once per second)
   try {
     playTick("second");
   } catch (e) {
-    // ignore audio errors
+    console.log(e);
   }
 
   // Play hour tick when the hour changes
@@ -108,4 +85,4 @@ function _updateAndTick() {
   }
 }
 
-_updateAndTick(); // Initial call to set the clock immediately and play initial ticks if allowed
+_updateAndTick(); 
